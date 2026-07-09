@@ -3,10 +3,12 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import type { RequestConUsuario } from '../auth/interfaces/request-con-usuario';
+
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @Post('register')
   register(@Body() dto: RegisterDto) {
@@ -20,7 +22,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('perfil')
-  perfil(@Request() req) {
+  perfil(@Request() req: RequestConUsuario) {
     return req.user;
   }
 }
