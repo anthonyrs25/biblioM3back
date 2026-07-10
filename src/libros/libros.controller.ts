@@ -14,7 +14,7 @@ export class LibrosController {
 
   // Regla: solo el bibliotecario crea libros (el admin tiene acceso a todo)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('BIBLIOTECARIO', 'ADMIN')
+  @Roles('BIBLIOTECARIO')
   @Post()
   create(@Body() dto: CreateLibroDto) {
     return this.librosService.create(dto);
