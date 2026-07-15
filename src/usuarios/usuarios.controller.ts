@@ -3,13 +3,11 @@ import {
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { Rol } from '@prisma/client';
+import { PermisosGuard } from '../auth/guards/permisos.guard';
+import { RequierePermiso } from '../auth/decorators/permisos.decorator';
 
-// Regla: el administrador tiene acceso a modificar, crear, eliminar y editar todas las tablas
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('ADMIN')
+@UseGuards(JwtAuthGuard, PermisosGuard)
+@RequierePermiso('gestionar_usuarios')
 @Controller('usuarios')
 export class UsuariosController {
   constructor(private usuariosService: UsuariosService) {}
@@ -22,7 +20,7 @@ export class UsuariosController {
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() dto: { nombre?: string; rol?: Rol },
+    @Body() dto: { nombre?: string; rol?: string },
   ) {
     return this.usuariosService.update(id, dto);
   }

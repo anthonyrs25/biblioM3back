@@ -5,22 +5,21 @@ import {
 import { LibrosService } from './libros.service';
 import { CreateLibroDto } from './dto/create-libro.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
+import { PermisosGuard } from '../auth/guards/permisos.guard';
+import { RequierePermiso } from '../auth/decorators/permisos.decorator';
 
 @Controller('libros')
 export class LibrosController {
   constructor(private librosService: LibrosService) {}
 
-  // Regla: solo el bibliotecario crea libros (el admin tiene acceso a todo)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('BIBLIOTECARIO')
+  // Solo quien tenga el permiso 'crear_libro' en la base (BIBLIOTECARIO)
+  @UseGuards(JwtAuthGuard, PermisosGuard)
+  @RequierePermiso('crear_libro')
   @Post()
   create(@Body() dto: CreateLibroDto) {
     return this.librosService.create(dto);
   }
 
-  // Público: ver libros y disponibilidad, con búsqueda
   @Get()
   findAll(
     @Query('titulo') titulo?: string,
@@ -36,15 +35,15 @@ export class LibrosController {
     return this.librosService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN', 'SUBADMIN')
+  @UseGuards(JwtAuthGuard, PermisosGuard)
+  @RequierePermiso('editar_libro')
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() dto: Partial<CreateLibroDto>) {
     return this.librosService.update(id, dto);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @UseGuards(JwtAuthGuard, PermisosGuard)
+  @RequierePermiso('eliminar_libro')
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.librosService.remove(id);

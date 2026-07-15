@@ -7,13 +7,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Rol {
-  ADMIN
-  SUBADMIN
-  BIBLIOTECARIO
-  PROFESOR
-  ESTUDIANTE
-  CLIENTE
+// ─── RBAC: roles y permisos como TABLAS (relación muchos-a-muchos) ───
+
+model Rol {
+  id        Int       @id @default(autoincrement())
+  nombre    String    @unique
+  permisos  Permiso[]
+  usuarios  Usuario[]
+  createdAt DateTime  @default(now())
+}
+
+model Permiso {
+  id          Int    @id @default(autoincrement())
+  clave       String @unique
+  descripcion String
+  roles       Rol[]
 }
 
 enum TipoDocumento {
@@ -33,7 +41,8 @@ model Usuario {
   nombre    String
   email     String     @unique
   password  String
-  rol       Rol        @default(CLIENTE)
+  rol       Rol        @relation(fields: [rolId], references: [id])
+  rolId     Int
   prestamos Prestamo[]
   createdAt DateTime   @default(now())
 }

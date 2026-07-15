@@ -1,5 +1,6 @@
-import { IsEmail, IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
-import { Rol } from '@prisma/client';
+import { IsEmail, IsIn, IsOptional, IsString, MinLength } from 'class-validator';
+
+const ROLES_PUBLICOS = ['CLIENTE', 'ESTUDIANTE', 'PROFESOR'];
 
 export class RegisterDto {
   @IsString()
@@ -12,8 +13,9 @@ export class RegisterDto {
   @MinLength(6)
   password: string;
 
-  // Simplificación académica: el rol se elige al registrarse para poder probar todos los actores.
   @IsOptional()
-  @IsEnum(Rol)
-  rol?: Rol;
+  @IsIn(ROLES_PUBLICOS, {
+    message: 'Los roles administrativos solo pueden ser asignados por un administrador',
+  })
+  rol?: string;
 }

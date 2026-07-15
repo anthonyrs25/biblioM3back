@@ -14,7 +14,7 @@ const MAX_ACTIVOS = 3;       // Regla: máximo 3 préstamos activos
 
 @Injectable()
 export class PrestamosService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(usuarioId: number, rol: string, dto: CreatePrestamoDto) {
     // Regla: ningún usuario puede tener más de 3 préstamos activos
@@ -115,7 +115,14 @@ export class PrestamosService {
     return this.prisma.prestamo.findMany({
       include: {
         libro: true,
-        usuario: { select: { id: true, nombre: true, email: true, rol: true } },
+        usuario: {
+          select: {
+            id: true,
+            nombre: true,
+            email: true,
+            rol: { select: { nombre: true } },
+          },
+        },
       },
       orderBy: { fechaPrestamo: 'desc' },
     });
