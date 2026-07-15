@@ -4,14 +4,14 @@ const ROLES_PUBLICOS = ['CLIENTE', 'ESTUDIANTE', 'PROFESOR'];
 
 export class RegisterDto {
   @IsString()
-  nombre: string;
+  nombre!: string;
 
   @IsEmail()
-  email: string;
+  email!: string;
 
   @IsString()
   @MinLength(6)
-  password: string;
+  password!: string;
 
   @IsOptional()
   @IsIn(ROLES_PUBLICOS, {
